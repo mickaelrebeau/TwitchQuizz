@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* UX tokens – lisibilité stream (spec UX) : fond sombre, contraste ≥ 4,5:1 */
+/* Fond: #0d1117 | Texte principal: #e6edf3 | Accents: cyan #00d4ff, orange #ff8c00 */
+
+:root {
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: #e6edf3;
+  background-color: #0d1117;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
