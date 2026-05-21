@@ -4,6 +4,12 @@
  * No secrets in code — all from env vars.
  */
 
+import { config } from "dotenv";
+import { resolve } from "path";
+
+// Charge server/.env (cwd = dossier server en dev et en prod systemd)
+config({ path: resolve(process.cwd(), ".env") });
+
 function parsePort(value: string | undefined): number {
   if (value === undefined || value === "") return 3000;
   const n = Number(value);
@@ -32,5 +38,11 @@ export const env = {
 } as const;
 
 export function hasTwitchConfig(): boolean {
-  return Boolean(env.TWITCH_CHANNEL && env.TWITCH_OAUTH);
+  const oauth = env.TWITCH_OAUTH;
+  return Boolean(
+    env.TWITCH_CHANNEL &&
+      oauth &&
+      oauth !== "oauth:..." &&
+      !oauth.endsWith("...")
+  );
 }

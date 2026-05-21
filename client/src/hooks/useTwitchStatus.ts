@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { apiUrl } from "../utils/apiBase";
 
 export interface TwitchStatus {
   channel: string | null;
@@ -15,13 +16,6 @@ export interface UseTwitchStatusResult extends TwitchStatus {
   error: string | null;
 }
 
-function getApiBase(): string {
-  const env = import.meta.env.VITE_SOCKET_URL;
-  if (typeof env === "string" && env.trim() !== "") return env.trim();
-  if (typeof window !== "undefined") return window.location.origin;
-  return "";
-}
-
 export function useTwitchStatus(pollIntervalMs = 30_000): UseTwitchStatusResult {
   const [state, setState] = useState<UseTwitchStatusResult>({
     channel: null,
@@ -31,15 +25,9 @@ export function useTwitchStatus(pollIntervalMs = 30_000): UseTwitchStatusResult 
   });
 
   useEffect(() => {
-    const base = getApiBase();
-    if (!base) {
-      setState((prev) => ({ ...prev, loading: false, error: "API URL non configurée" }));
-      return;
-    }
-
     const fetchStatus = async () => {
       try {
-        const res = await fetch(`${base}/api/twitch/status`);
+        const res = await fetch(apiUrl("/api/twitch/status"));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as TwitchStatus;
         setState((prev) => ({

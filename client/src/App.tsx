@@ -20,7 +20,12 @@ function App() {
     questionDurationMs,
     hackState,
   } = useLeaderboard();
-  const { channel, connected: twitchConnected, loading: twitchLoading } = useTwitchStatus();
+  const {
+    channel,
+    connected: twitchConnected,
+    loading: twitchLoading,
+    error: twitchError,
+  } = useTwitchStatus();
 
   const isLoading = !hasReceivedData;
   const isDegraded =
@@ -33,9 +38,27 @@ function App() {
         Leaderboard
       </h1>
 
-      {!twitchLoading && twitchConnected && channel && (
+      {twitchLoading && (
+        <p className="font-mono text-gray-400 text-sm mb-2" role="status">
+          Vérification Twitch…
+        </p>
+      )}
+
+      {!twitchLoading && twitchError && (
+        <p className="font-mono text-[#ff8c00] text-sm mb-2" role="alert">
+          Statut Twitch indisponible ({twitchError})
+        </p>
+      )}
+
+      {!twitchLoading && !twitchError && twitchConnected && channel && (
         <p className="font-mono text-[#9146ff] text-sm mb-2" role="status">
           Connecté à Twitch #{channel}
+        </p>
+      )}
+
+      {!twitchLoading && !twitchError && !twitchConnected && channel && (
+        <p className="font-mono text-[#ff8c00] text-sm mb-2" role="status">
+          Twitch #{channel} — connexion en cours…
         </p>
       )}
 

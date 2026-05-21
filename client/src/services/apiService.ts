@@ -1,16 +1,10 @@
 /**
  * Appels API du serveur (game, etc.).
- * Utilise la même URL de base que le socket (VITE_SOCKET_URL ou window.location.origin).
+ * Utilise la même URL de base que le socket (VITE_SOCKET_URL ou chemins relatifs).
  */
 
-function getApiBase(): string {
-  const env = import.meta.env.VITE_SOCKET_URL;
-  if (typeof env === "string" && env.trim() !== "") return env.trim();
-  if (typeof window !== "undefined") return window.location.origin;
-  return "";
-}
-
 import type { HackState } from "../types/socket";
+import { apiUrl } from "../utils/apiBase";
 
 export interface GameStateResponse {
   gameState: "waiting" | "playing" | "ended";
@@ -26,8 +20,7 @@ export interface GameSetupResponse {
 }
 
 export async function fetchSetup(): Promise<GameSetupResponse> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/setup`);
+  const res = await fetch(apiUrl("/api/game/setup"));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json() as Promise<GameSetupResponse>;
 }
@@ -36,8 +29,7 @@ export async function saveSetup(partial: {
   questionDurationMs?: number;
   numberOfQuestions?: number;
 }): Promise<GameSetupResponse> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/setup`, {
+  const res = await fetch(apiUrl("/api/game/setup"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(partial),
@@ -47,22 +39,19 @@ export async function saveSetup(partial: {
 }
 
 export async function fetchGameState(): Promise<GameStateResponse> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/state`);
+  const res = await fetch(apiUrl("/api/game/state"));
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json() as Promise<GameStateResponse>;
 }
 
 export async function startGame(): Promise<void> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/start`, { method: "POST" });
+  const res = await fetch(apiUrl("/api/game/start"), { method: "POST" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 /** Passe à la question suivante (liste prédéfinie côté serveur). */
 export async function nextQuestion(): Promise<void> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/next`, {
+  const res = await fetch(apiUrl("/api/game/next"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
@@ -74,7 +63,6 @@ export async function nextQuestion(): Promise<void> {
 }
 
 export async function endGame(): Promise<void> {
-  const base = getApiBase();
-  const res = await fetch(`${base}/api/game/end`, { method: "POST" });
+  const res = await fetch(apiUrl("/api/game/end"), { method: "POST" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
